@@ -14,24 +14,38 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using Localiza.Frotas.Infra.Repository.EF;
+using Microsoft.EntityFrameworkCore;
 
 namespace Localiza.Frotas
 {
+    /// <summary>
+    /// Classe de configuração da aplicação .Net Core.
+    /// </summary>
     public class Startup
     {
+
+        /// <summary>
+        /// Construtor padrão da classe Startup.
+        /// </summary>
+        /// <param name="configuration">Parametro para obter o arquivo de configuração appsettings.json</param>
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
         }
 
+        /// <summary>
+        /// Propriedade somente leitura para acessar os itens do arquivo de configuração appsettings.json
+        /// </summary>
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
+        /// <summary>
+        /// Este método é chamado em tempo de execução. Use este método para adicionar serviços a sua aplicação. 
+        /// </summary>
         public void ConfigureServices(IServiceCollection services)
         {
-
             services.AddControllers();
 
+            services.AddDbContext<FrotaContext>(opt => opt.UseInMemoryDatabase());
             services.AddSingleton<IVeiculoRepository, InMemoryRepository>();
 
             services.AddSwaggerGen(c =>
@@ -42,8 +56,12 @@ namespace Localiza.Frotas
                 c.IncludeXmlComments(xmlPathApi);
             });
         }
-
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        
+        /// <summary>
+        /// Este método é chamado em tempo de execução. Use este método para adicionar configurações de requisição HTTP.
+        /// </summary>
+        /// <param name="app">description</param>
+        /// <param name="env">description</param>
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
